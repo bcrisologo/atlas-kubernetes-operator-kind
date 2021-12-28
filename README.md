@@ -47,6 +47,23 @@ https://cloud.mongodb.com/v2#/org/<Org ID>/projects
 ```
 The API keys should be created via the MongoDB Atlas Project API level.  You can read more on the [Atlas API Administration documentation](https://docs.atlas.mongodb.com/api/atlas-admin-api/).
 
+### 4. Create the [AtlasProject]() custom resource
+
+You will then need to create the custom resource for `atlascluster.atlas.mongodb.com` by running the command:
+```
+cat <<EOF | kubectl apply -f -
+apiVersion: atlas.mongodb.com/v1
+kind: AtlasProject
+metadata:
+  name: my-project
+spec:
+  name: <Reference Project>
+EOF
+```
+where:
+* `my-project` - designated reference project name for the Kubernetes cluster (could be any but cannot use spaces in the name)
+* `<Reference Project>` - project name found on MongoDB Atlas that you designate the cluster to be deployed
+
 ## Footnote
 
 You can visit the official [MongoDB Atlas Kubernetes Github Repo](https://github.com/mongodb/mongodb-atlas-kubernetes) as well.
