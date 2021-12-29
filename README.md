@@ -2,7 +2,7 @@
 
 ## Summary
 
-A tutorial that goes from deploying a local Kubernetes (K8) cluster that allows you to deploy a MongoDB Atlas cluster using the [Atlas Kubernetes Operator](https://www.mongodb.com/kubernetes/atlas-operator).  We will be using a kind cluster in this case for MacOS, but you can deploy a K8 cluster using other tools as well (i.e. OpenShift).
+A tutorial that goes from deploying a local Kubernetes (K8) cluster that allows you to deploy a MongoDB Atlas cluster using the [Atlas Kubernetes Operator](https://www.mongodb.com/kubernetes/atlas-operator).  We will be using a kind cluster in this case for MacOS, but you can deploy a K8 cluster using other tools as well (i.e. OpenShift, Minikube).
 
 The tutorial below follows the deployment path from the [Introducing Atlas Kubernetes Operator](https://www.mongodb.com/blog/post/introducing-atlas-operator-kubernetes) blog and the [Quick Start official documentation](https://docs.atlas.mongodb.com/reference/atlas-operator/ak8so-quick-start/).
 
@@ -17,7 +17,7 @@ This tutorial will go over deploying an M10 cluster to your Atlas project with a
 ## Process
 
 ### 1. Deploy the Kind Kubernetes cluster
-First task is to deploy a `kind` cluster with the name `mongodb-atlas-system` first:
+First task is to deploy a `kind` cluster (for this tutorial, we'll be naming it `mongodb-atlas-system`):
 
 ```
 $ kind create cluster --name mongodb-atlas-system
@@ -69,6 +69,8 @@ You can retrieve the project details by running the command:
 kubectl get atlasprojects.atlas.mongodb.com -o yaml
 ```
 
+**NOTE: Defining this to an already existing project with an existing IP Access list or database users can inadertently delete the current entries if you do not specify those resources on the command above*
+
 ### 5. Create the [AtlasCluster](https://docs.atlas.mongodb.com/reference/atlas-operator/atlascluster-custom-resource/#atlascluster-custom-resource) custom resource and deploy the Mongodb Atlas Cluster
 
 In this section, you specify the cluster configuration
@@ -94,11 +96,20 @@ Once run, you can retrieve details about the cluster by obtaining the custom res
 $ kubectl get atlasclusters.atlas.mongodb.com -o yaml
 ```
 
-### (Optional) Delete Cluster
+**Note as of this writing, it does not appear that you can deploy a shared-tier cluster (M0/M2/M5) using the Atlas Kubernetes Operator.*
 
-You can delete a cluster by indicating the resource `atlasclusters.atlas.mongodb.com` as per below:
+Once done, congrats you have deployed an M10 Atlas cluster on AWS US_EAST_1 region!
+
+### (Optional) Delete Custom Resource Definitions
+
+You can delete a project resource on your kubernetes cluster by indicating the resource `atlasprojects.atlas.mongodb.com` as per below:
 ```
-$ kubectl delete atlasclusters.atlas.mongodb.com <spec-name-of-cluster>
+$ kubectl delete atlasprojects.atlas.mongodb.com <metadata-name-of-project>
+```
+
+You can terminate the cluster deployd by indicating the resource `atlasclusters.atlas.mongodb.com` as per below:
+```
+$ kubectl delete atlasclusters.atlas.mongodb.com <metadata-name-of-cluster>
 ```
 
 ## Footnote
@@ -106,3 +117,5 @@ $ kubectl delete atlasclusters.atlas.mongodb.com <spec-name-of-cluster>
 You can visit the official [MongoDB Atlas Kubernetes Github Repo](https://github.com/mongodb/mongodb-atlas-kubernetes) as well.
 
 For usage of the MongoDB Kubernetes Operator with MongoDB Ops Manager, you can visit [this documentation](https://docs.mongodb.com/kubernetes-operator/master/kind-quick-start/).
+
+Another good resource for using the Atlas Kubernetes Operator is this [github repo](https://github.com/Knappek/mongodbatlas-operator).
